@@ -24,22 +24,18 @@ passport.use(new LocalStrategy({
       else done(null, false)
     } catch (err) {
       done(null, false)
-      throw err
+      console.log(err)
     }
   }
 ))
 
-router.get('/login', (req, res) => {
-  res.render('users/login')
+router.get('/auth', (req, res) => {
+  res.render('users/auth')
 })
 router.post('/login', passport.authenticate('local', {
   successRedirect: '/',
   failureRedirect: '/users/login'
 }))
-
-router.get('/new', (req, res) => {
-  res.render('users/register')
-})
 router.post('/new', async(req, res) => {
   let username = req.body.username
   let email = req.body.email
@@ -54,7 +50,7 @@ router.post('/new', async(req, res) => {
     })
   } catch (err) {
     res.redirect('back')
-    throw err
+    console.log(err)
   }
 })
 

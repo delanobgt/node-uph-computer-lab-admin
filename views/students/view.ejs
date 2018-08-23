@@ -1,0 +1,16 @@
+<% include ../partials/header %>
+
+<body>
+  <% include ../partials/nav %>
+
+  <% include ../partials/script %>
+  <script>
+    $(document).ready(function () {
+        $('.sidenav').sidenav();
+        // $('.sidenav').show();
+        $('.collapsible').collapsible();
+    });
+  </script>  
+</body>
+
+<% include ../partials/footer %>

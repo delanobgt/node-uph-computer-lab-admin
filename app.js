@@ -11,8 +11,12 @@ let expressValidator = require('express-validator')
 let passport = require('passport')
 let flash = require('connect-flash')
 
+// middlewares import
+let auth = require('./middlewares/auth')
+
 // routes import
 let usersRouter = require('./routes/users')
+let studentsRouter = require('./routes/students')
 
 const app = express()
 
@@ -42,17 +46,18 @@ app.use((req, res, next) => {
 })
 
 // dashboard
-app.get('/', (req, res) => {
+app.get('/', auth.isLoggedIn, (req, res) => {
   console.log(req.isAuthenticated())
   console.log(req.session.passport)
-  res.render('dashboard')
+  res.render('dashboard/dashboard')
 })
 
 // other routes
 app.use('/users', usersRouter)
+app.use('/students', studentsRouter)
 
 // not found routes
-app.get('*', (req, res) => {
+app.get('*', auth.isLoggedIn, (req, res) => {
   res.send('404 not found')
 })
 
