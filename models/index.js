@@ -10,11 +10,20 @@ let sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, proc
 })
 
 const User = require('./user')(sequelize)
+const Student = require('./student')(sequelize)
+const LabTransaction = require('./lab-transaction')(sequelize)
+const StudyProgram = require('./study-program')(sequelize)
+
+Student.belongsTo(StudyProgram, {foreignKey: 'study_program_id', targetKey: 'id'})
+LabTransaction.belongsTo(Student, {foreignKey: 'student_id', targetKey: 'id'})
 
 sequelize.sync({
   logging: console.log
 })
-  
+
 module.exports = {
-  User
+  User,
+  Student,
+  LabTransaction,
+  StudyProgram
 }

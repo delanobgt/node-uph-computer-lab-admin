@@ -17,6 +17,7 @@ let auth = require('./middlewares/auth')
 // routes import
 let usersRouter = require('./routes/users')
 let studentsRouter = require('./routes/students')
+let apiRouter = require('./routes/api')
 
 const app = express()
 
@@ -55,6 +56,7 @@ app.get('/', auth.isLoggedIn, (req, res) => {
 // other routes
 app.use('/users', usersRouter)
 app.use('/students', studentsRouter)
+app.use('/api', apiRouter)
 
 // not found routes
 app.get('*', auth.isLoggedIn, (req, res) => {

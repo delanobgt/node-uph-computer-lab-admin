@@ -1,7 +1,7 @@
 let Sequelize = require('sequelize');
 
 let model = function (sequelize) {
-  return sequelize.define('user', {
+  return sequelize.define('student', {
     id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
@@ -9,18 +9,17 @@ let model = function (sequelize) {
       unique: true,
       autoIncrement: true
     },
-    username: {
+    student_id: {
       type: Sequelize.STRING,
       allowNull: false,
       unique: true
     },
-    email: {
+    name: {
       type: Sequelize.STRING,
-      allowNull: false,
-      unique: true
+      allowNull: false
     },
-    password: {
-      type: Sequelize.STRING,
+    study_program_id: {
+      type: Sequelize.INTEGER,
       allowNull: false
     }
   })
