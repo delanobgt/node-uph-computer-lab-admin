@@ -1,16 +1,55 @@
 <% include ../partials/header %>
 
-<body>
-  <% include ../partials/nav %>
+  <body>
+    <% include ../partials/nav %>
+      <div class="container">
+        <h3>Student Data</h3>
+        <div class="divider" style="margin-bottom:2%;"></div>
+        <ul class="collapsible">
+          <li>
+            <div class="collapsible-header"><i class="material-icons">add</i>Add Student</div>
+            <div class="collapsible-body">
+              <div class="row">
+                <form class="col s12">
+                  <div class="row">
+                    <div class="input-field col s12">
+                      <input placeholder="00000022812" id="nim" type="text" class="validate">
+                      <label for="name">Nomor Induk Mahasiswa (NIM)</label>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="input-field col s12">
+                      <input placeholder="John Smith" id="name" type="text" class="validate">
+                      <label for="name">Name</label>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="input-field col s12">
+                      <input placeholder="Managemen" id="program_studi" type="text" class="validate">
+                      <label for="name">Program Studi</label>
+                    </div>
+                  </div>
+                  <div class="right-align">
+                    <a class="waves-effect waves-light btn"><i class="material-icons right">send</i>Save</a>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </li>
+        </ul>
 
-  <% include ../partials/script %>
-  <script>
-    $(document).ready(function () {
-        $('.sidenav').sidenav();
-        // $('.sidenav').show();
-        $('.collapsible').collapsible();
-    });
-  </script>  
-</body>
+      </div>
+      <!-- div untuk membuat col ttp 9 -->
+      </div>
+      </div>
+      <% include ../partials/script %>
+        <script>
+          $(document).ready(function () {
+            $('.sidenav').sidenav();
+            // $('.sidenav').show();
+            $('.collapsible').collapsible();
+          });
+        </script>
+  </body>
 
-<% include ../partials/footer %>
+  <% include ../partials/footer %>
