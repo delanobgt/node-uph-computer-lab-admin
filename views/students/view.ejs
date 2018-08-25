@@ -20,6 +20,18 @@
     .select-dropdown {
       max-height: 300px !important;
     }
+
+    span.confirmation {
+      color: rgb(70, 70, 70);
+      background: rgb(220, 220, 220);
+      border: 2px solid rgb(180, 180, 180);
+      border-radius: 3px;
+      padding: 0.1em 0.3em;
+    }
+
+    p.confirmation {
+      line-height: 220%;
+    }
   </style>
 
   <body>
@@ -120,6 +132,31 @@
         </div>
       </div>
 
+      <div id="modal_delete" class="modal">
+        <div class="modal-content" style="margin:0; padding-bottom:0;">
+          <div class="row" style="margin-top:0; margin-bottom:0;">
+            <h4 class="col s12">Delete Student</h4>
+            <div class="input-field col s12" style="margin-top:0; margin-bottom:0;">
+              <p class="confirmation" style="margin-top:0; margin-bottom:0;">
+                Are you sure? <br>
+                Please type <span class="confirmation"></span> to confirm deletion.
+              </p>
+            </div>
+            <div class="input-field col s12">
+              <input id="confirmation" name="confirmation" type="text" class="validate" required>
+              <label for="confirmation">Retype here</label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="margin-bottom:0.35em;">
+          <button id="btn_cancel" class="waves-effect waves-red btn-flat">CANCEL</button>
+          <button id="btn_delete" class="waves-effect waves-light btn red darken-1">DELETE</button>
+        </div>
+        <div class="progress" style="display:none; margin:0;">
+          <div class="indeterminate orange"></div>
+        </div>
+      </div>
+
       <!-- div untuk membuat col ttp 9 -->
       </div>
       </div>
@@ -130,8 +167,9 @@
     <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
     <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script>
-    <script src="/javascripts/components/modal-edit.js"></script>
     <script src="/javascripts/components/collapsible-create.js"></script>
+    <script src="/javascripts/components/modal-edit.js"></script>
+    <script src="/javascripts/components/modal-delete.js"></script>
     <script>
       $(document).ready(async () => {
         let table = await initTable('#table')
@@ -190,6 +228,11 @@
           $('#table').on('click', 'i.my-edit', function () {
             let row = table.row($(this).parent().parent())
             new ModalEdit($('#modal_edit')[0], row).show()
+          })
+
+          $('#table').on('click', 'i.my-close', function () {
+            let row = table.row($(this).parent().parent())
+            new ModalDelete($('#modal_delete')[0], row).show()
           })
 
           $table.show('slow')

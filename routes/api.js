@@ -40,6 +40,18 @@ router.post('/students', async (req, res) => {
   }
 })
 
+router.delete('/students/:studentID', async (req, res) => {
+  try {
+    await db.Student.destroy({
+      where: { student_id: req.params.studentID }
+    })
+    res.json({success: true})
+  } catch (err) {
+    console.log(err)
+    res.status(404).json({ msg: 'Error/Duplicate data' })
+  }
+})
+
 router.put('/students/:studentID', async (req, res) => {
   try {
     let newStudyProgram = await db.StudyProgram.findOne({

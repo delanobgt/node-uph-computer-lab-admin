@@ -32,9 +32,10 @@ class CollapsibleCreate {
         // animation
         this.$collapsible.find('.progress').slideDown('fast')
 
-        // DOM update
+        // AJAX create
         let newStudent = await $.post(`/api/students`, 
             { studentID, name, studyProgram })
+        // DOM update
         table.row
           .add([studentID, name, studyProgram, '<i class="my-edit material-icons">border_color</i>',
           '<i class="my-close material-icons">close</i>'])

@@ -31,11 +31,11 @@ class ModalEdit {
     
     // initial data
     let data = row.data()
-    let oldStudentID = data[0]
-    let oldName = data[1]
-    let oldStudyProgram = data[2]
-    this.$modal.find('#student_id').val(oldStudentID.trim())
-    this.$modal.find('#name').val(oldName.trim())
+    let oldStudentID = data[0].trim()
+    let oldName = data[1].trim()
+    let oldStudyProgram = data[2].trim()
+    this.$modal.find('#student_id').val(oldStudentID)
+    this.$modal.find('#name').val(oldName)
 
     this.$select = this.$modal.find('select')
     this.selectDOM = this.$select[0]
@@ -81,7 +81,7 @@ class ModalEdit {
         this.$modal.find('.progress').slideDown('fast')
 
         // DOM update
-        let updatedStudent = await $.post(`/api/students/${data[0].trim()}?_method=PUT`, 
+        let updatedStudent = await $.post(`/api/students/${oldStudentID}?_method=PUT`, 
             { newStudentID, newName, newStudyProgram })
         let newData = [newStudentID, newName, newStudyProgram].concat(row.data().slice(3, 5))
         row.data(newData)
@@ -99,8 +99,8 @@ class ModalEdit {
         this.$modal.find(`span:contains('${oldStudyProgram}')`).click()
       } catch (err) {
         // animation
-        M.toast({html: err.responseJSON.msg, classes: 'red', displayLength: 2000})
         console.log('error', err)
+        M.toast({html: err.responseJSON.msg, classes: 'red', displayLength: 2000})
       } finally {
         this.$modal.find('.progress').slideUp('fast')
       }
