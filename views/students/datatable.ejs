@@ -69,78 +69,78 @@
     </div>
 
     <% include ../partials/script %>
-      <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
-      <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>
-      <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-      <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
-      <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
-      <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script>
-      <script src="/javascripts/components/modal-edit.js"></script>
-      <script>
-        async function initTable(tableID) {
-          const $table = $(tableID)
-          try {
-            let data = await $.get('/api/students')
-            let formattedData = data.map(data => [data.student_id, data.name, data.study_program.name,
-              '<i class="my-edit material-icons">border_color</i>', '<i class="my-close material-icons">close</i>'
-            ])
-            let table = $table.DataTable({
-              destroy: true,
-              deferRender: true,
-              responsive: true,
-              dom: 'Bfrtip',
-              lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
-              buttons: [
-                'pageLength',
-                {
-                  extend: 'copyHtml5',
-                  exportOptions: {
-                    columns: [0, 1, 2],
-                  }
-                },
-                {
-                  extend: 'excelHtml5',
-                  title: 'LAB STUDENTS',
-                  exportOptions: {
-                    columns: [0, 1, 2]
-                  }
-                },
-                {
-                  extend: 'pdf',
-                  title: 'LAB STUDENTS',
-                  text: 'Pdf',
-                  orientation: 'landscape',
-                  exportOptions: {
-                    columns: [0, 1, 2]
-                  }
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script>
+    <script src="/javascripts/components/modal-edit.js"></script>
+    <script>
+      async function initTable(tableID) {
+        const $table = $(tableID)
+        try {
+          let data = await $.get('/api/students')
+          let formattedData = data.map(data => [data.student_id, data.name, data.study_program.name,
+            '<i class="my-edit material-icons">border_color</i>', '<i class="my-close material-icons">close</i>'
+          ])
+          let table = $table.DataTable({
+            destroy: true,
+            deferRender: true,
+            responsive: true,
+            dom: 'Bfrtip',
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            buttons: [
+              'pageLength',
+              {
+                extend: 'copyHtml5',
+                exportOptions: {
+                  columns: [0, 1, 2],
                 }
-              ],
-              data: formattedData
-            })
+              },
+              {
+                extend: 'excelHtml5',
+                title: 'LAB STUDENTS',
+                exportOptions: {
+                  columns: [0, 1, 2]
+                }
+              },
+              {
+                extend: 'pdf',
+                title: 'LAB STUDENTS',
+                text: 'Pdf',
+                orientation: 'landscape',
+                exportOptions: {
+                  columns: [0, 1, 2]
+                }
+              }
+            ],
+            data: formattedData
+          })
 
-            // assign edit event
-            $('#table').on('click', 'i.my-edit', function () {
-              let row = table.row($(this).parent().parent())
-              new ModalEdit($('#modal_edit')[0], row).show()
-            })
+          // assign edit event
+          $('#table').on('click', 'i.my-edit', function () {
+            let row = table.row($(this).parent().parent())
+            new ModalEdit($('#modal_edit')[0], row).show()
+          })
 
-            // assign delete event
-            $('#table tbody tr td').on('click', 'i.my-close', function () {
-              let row = table.row($(this).parent().parent())
-              new ModalEdit($('#modal_edit')[0], row).show()
-            })
-          } catch (err) {
-            console.log(err)
-          }
+          // assign delete event
+          $('#table tbody tr td').on('click', 'i.my-close', function () {
+            let row = table.row($(this).parent().parent())
+            new ModalEdit($('#modal_edit')[0], row).show()
+          })
+        } catch (err) {
+          console.log(err)
         }
+      }
 
-        $(document).ready(function () {
-          $('.sidenav').sidenav()
-          $('.collapsible').collapsible()
+      $(document).ready(function () {
+        $('.sidenav').sidenav()
+        $('.collapsible').collapsible()
 
-          initTable('#table')
-        });
-      </script>
+        initTable('#table')
+      });
+    </script>
   </body>
 
   <% include ../partials/footer %>

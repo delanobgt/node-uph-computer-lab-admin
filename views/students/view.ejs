@@ -1,55 +1,208 @@
-<% include ../partials/header %>
+<% include ../partials/table-header %>
+
+  <style>
+    .my-close {
+      user-select: none;
+      cursor: pointer;
+      background: lightgray;
+      border-radius: 100%;
+      padding: 0.2em;
+      font-size: 1em;
+    }
+
+    .my-edit {
+      user-select: none;
+      cursor: pointer;
+      padding: 0.2em;
+      font-size: 1.25em;
+    }
+
+    .select-dropdown {
+      max-height: 300px !important;
+    }
+  </style>
 
   <body>
     <% include ../partials/nav %>
       <div class="container">
         <h3>Student Data</h3>
         <div class="divider" style="margin-bottom:2%;"></div>
-        <ul class="collapsible">
+
+        <ul id="collapsible_create" class="collapsible">
           <li>
-            <div class="collapsible-header"><i class="material-icons">add</i>Add Student</div>
+            <div class="collapsible-header">
+              <i class="material-icons">add</i>Add Student</div>
             <div class="collapsible-body">
               <div class="row">
                 <form class="col s12">
                   <div class="row">
                     <div class="input-field col s12">
-                      <input placeholder="00000022812" id="nim" type="text" class="validate">
-                      <label for="name">Nomor Induk Mahasiswa (NIM)</label>
+                      <input id="student_id" type="text" class="validate">
+                      <label for="name">Student ID</label>
                     </div>
-                  </div>
-                  <div class="row">
                     <div class="input-field col s12">
-                      <input placeholder="John Smith" id="name" type="text" class="validate">
+                      <input id="name" type="text" class="validate">
                       <label for="name">Name</label>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="input-field col s12">
-                      <input placeholder="Managemen" id="program_studi" type="text" class="validate">
-                      <label for="name">Program Studi</label>
+                    <div id="div_select" class="input-field col s12">
+                      <select id="study_program" name="study_program" style="margin-top:0.5em;">
+                        <option value="" disabled selected>Loading Study Programs..</option>
+                      </select>
+                      <label for="study_program">Study Program</label>
                     </div>
                   </div>
                   <div class="right-align">
-                    <a class="waves-effect waves-light btn"><i class="material-icons right">send</i>Save</a>
+                    <button id="btn_cancel" type="button" class="waves-effect waves-light btn-flat">CANCEL</button>
+                    <button id="btn_create" type="button" class="waves-effect waves-light btn orange">
+                      <i class="material-icons right">send</i>CREATE
+                    </button>
                   </div>
                 </form>
               </div>
             </div>
+            <div class="progress" style="display:none; margin:0;">
+              <div class="indeterminate orange"></div>
+            </div>
           </li>
         </ul>
 
+        <br>
+        <div id="div_table">
+          <table id="table" class="display" style="display:none; width:100%;">
+            <thead>
+              <tr>
+                <th>NIM</th>
+                <th>Name</th>
+                <th>Study Program</th>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <br>
+
+        <% include ../partials/preloader-spinner %>
+
+        <div id="div_fail_fetch" class="center-align" style="display:none;">
+          <img src="/images/cute_sad_icon.png"> <br>
+          <h6>Failed to fetch students.</h6>
+        </div>
       </div>
+
+      <div id="modal_edit" class="modal">
+        <div class="modal-content">
+          <div class="row">
+            <h4 class="col s12">Edit Student</h4>
+            <div class="input-field col s12">
+              <input id="student_id" name="student_id" type="text" class="validate" required>
+              <label for="student_id">Student ID</label>
+            </div>
+            <div class="input-field col s12">
+              <input id="name" name="name" type="text" class="validate" required>
+              <label for="name">Name</label>
+            </div>
+            <div id="div_select" class="input-field col s12">
+              <select id="study_program" name="study_program" style="margin-top:0.5em;">
+                <option value="" disabled selected>Loading Study Programs..</option>
+              </select>
+              <label for="study_program">Study Program</label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="margin-bottom:0.35em;">
+          <button id="btn_reset" class="waves-effect waves-red btn-flat">RESET</button>
+          <button id="btn_update" class="waves-effect waves-light btn orange darken-1">Update</button>
+        </div>
+        <div class="progress" style="display:none; margin:0;">
+          <div class="indeterminate orange"></div>
+        </div>
+      </div>
+
       <!-- div untuk membuat col ttp 9 -->
       </div>
       </div>
       <% include ../partials/script %>
-        <script>
-          $(document).ready(function () {
-            $('.sidenav').sidenav();
-            // $('.sidenav').show();
-            $('.collapsible').collapsible();
-          });
-        </script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script>
+    <script src="/javascripts/components/modal-edit.js"></script>
+    <script src="/javascripts/components/collapsible-create.js"></script>
+    <script>
+      $(document).ready(async () => {
+        let table = await initTable('#table')
+        if (table) {
+          // assign create event handler
+          new CollapsibleCreate($('#collapsible_create')[0], table)
+        }
+      });
+
+      async function initTable(tableID) {
+        const $table = $(tableID)
+        try {
+          let data = await $.get('/api/students')
+          let formattedData = data.map(data => [data.student_id, data.name, data.study_program.name,
+            '<i class="my-edit material-icons">border_color</i>',
+            '<i class="my-close material-icons">close</i>'
+          ])
+          let table = $table.DataTable({
+            destroy: true,
+            deferRender: true,
+            responsive: true,
+            dom: 'Bfrtip',
+            lengthMenu: [
+              [10, 25, 50, -1],
+              [10, 25, 50, "All"]
+            ],
+            buttons: [
+              'pageLength',
+              {
+                extend: 'copyHtml5',
+                exportOptions: {
+                  columns: [0, 1, 2],
+                }
+              },
+              {
+                extend: 'excelHtml5',
+                title: 'LAB STUDENTS',
+                exportOptions: {
+                  columns: [0, 1, 2]
+                }
+              },
+              {
+                extend: 'pdf',
+                title: 'LAB STUDENTS',
+                text: 'Pdf',
+                orientation: 'landscape',
+                exportOptions: {
+                  columns: [0, 1, 2]
+                }
+              }
+            ],
+            data: formattedData
+          })
+
+          // assign edit event handler
+          $('#table').on('click', 'i.my-edit', function () {
+            let row = table.row($(this).parent().parent())
+            new ModalEdit($('#modal_edit')[0], row).show()
+          })
+
+          $table.show('slow')
+          return table
+        } catch (err) {
+          console.log(err)
+          $('#div_fail_fetch').show()
+          return null
+        } finally {
+          $('#preloader_container').hide('fast')
+        }
+      }
+    </script>
   </body>
 
   <% include ../partials/footer %>

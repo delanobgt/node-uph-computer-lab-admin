@@ -1,13 +1,13 @@
 jQuery.fn.flash = function (color, duration) {
-  var current = this.css('backgroundColor');
+  let current = this.css('backgroundColor')
   this
     .animate({ backgroundColor: color }, duration / 2)
-    .animate({ backgroundColor: current }, duration / 2);
+    .animate({ backgroundColor: current }, duration / 2)
 }
 
 class ModalEdit {
   constructor(modalDOM, row) {
-    this.self = this
+    let self = this
 
     this.modalDOM = modalDOM
     this.$modal = $(modalDOM)
@@ -41,6 +41,7 @@ class ModalEdit {
     this.selectDOM = this.$select[0]
     this.selectInstance = M.FormSelect.init(this.selectDOM, {})
 
+    this.$select.empty().append($('<option>').text('Loading Study Programs..'))
     $.get('/api/study-programs')
       .then(studyPrograms => {
         this.$select.empty()
@@ -71,6 +72,10 @@ class ModalEdit {
       let newStudentID = this.$modal.find('#student_id').val().trim()
       let newName = this.$modal.find('#name').val().trim()
       let newStudyProgram = this.$modal.find('.selected span').text().trim()
+      if (newStudentID === '' || newName === '') {
+        M.toast({html: 'Fields can\'t be empty', classes: 'orange', displayLength: 2000})
+        return
+      }
       try {
         // animation
         this.$modal.find('.progress').slideDown('fast')
@@ -84,7 +89,6 @@ class ModalEdit {
         // animation
         M.toast({html: 'Student updated!', classes: 'orange', displayLength: 2000})
         $(row.node()).flash('yellow', 800)
-        this.$modal.find('.progress').slideUp('fast')
 
         // update old data
         oldStudentID = newStudentID
@@ -97,6 +101,8 @@ class ModalEdit {
         // animation
         M.toast({html: err.responseJSON.msg, classes: 'red', displayLength: 2000})
         console.log('error', err)
+      } finally {
+        this.$modal.find('.progress').slideUp('fast')
       }
     })
 

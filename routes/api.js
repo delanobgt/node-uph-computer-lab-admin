@@ -23,6 +23,23 @@ router.get('/students', async (req, res) => {
   }
 })
 
+router.post('/students', async (req, res) => {
+  try {
+    let studyProgram = await db.StudyProgram.findOne({
+      where: { name: req.body.studyProgram }
+    })
+    let student = await db.Student.create({
+      student_id: req.body.studentID,
+      name: req.body.name,
+      study_program_id: studyProgram.id
+    })
+    res.json(student)
+  } catch (err) {
+    console.log(err)
+    res.status(404).json({ msg: 'Error/Duplicate Student' })
+  }
+})
+
 router.put('/students/:studentID', async (req, res) => {
   try {
     let newStudyProgram = await db.StudyProgram.findOne({
