@@ -37,7 +37,7 @@
   <body>
     <% include ../partials/nav %>
       <div class="container">
-        <h3>Student Data</h3>
+        <h3>Students</h3>
         <div class="divider" style="margin-bottom:2%;"></div>
 
         <ul id="collapsible_create" class="collapsible">
@@ -96,11 +96,7 @@
         <br>
 
         <% include ../partials/preloader-spinner %>
-
-        <div id="div_fail_fetch" class="center-align" style="display:none;">
-          <img src="/images/cute_sad_icon.png"> <br>
-          <h6>Failed to fetch students.</h6>
-        </div>
+        <% include ../partials/div-fail-fetch %>
       </div>
 
       <div id="modal_edit" class="modal">
@@ -172,6 +168,7 @@
     <script src="/javascripts/components/modal-delete.js"></script>
     <script>
       $(document).ready(async () => {
+        $(".dropdown-trigger").dropdown()        
         let table = await initTable('#table')
         if (table) {
           // assign create event handler
@@ -182,7 +179,8 @@
       async function initTable(tableID) {
         const $table = $(tableID)
         try {
-          let data = await $.get('/api/students')
+          let data = await $.get('/students/api')
+          console.log(data)
           let formattedData = data.map(data => [data.student_id, data.name, data.study_program.name,
             '<i class="my-edit material-icons">border_color</i>',
             '<i class="my-close material-icons">close</i>'

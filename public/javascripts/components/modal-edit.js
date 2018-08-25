@@ -81,7 +81,7 @@ class ModalEdit {
         this.$modal.find('.progress').slideDown('fast')
 
         // DOM update
-        let updatedStudent = await $.post(`/api/students/${oldStudentID}?_method=PUT`, 
+        let updatedStudent = await $.post(`/students/api/${oldStudentID}?_method=PUT`, 
             { newStudentID, newName, newStudyProgram })
         let newData = [newStudentID, newName, newStudyProgram].concat(row.data().slice(3, 5))
         row.data(newData)

@@ -51,7 +51,7 @@ class ModalDelete {
         this.$modal.find('.progress').slideDown('fast')
 
         // AJAX delete
-        await $.post(`/api/students/${studentID}?_method=DELETE`)
+        await $.post(`/students/api/${studentID}?_method=DELETE`)
 
         // animation
         this.modalInstance.close()

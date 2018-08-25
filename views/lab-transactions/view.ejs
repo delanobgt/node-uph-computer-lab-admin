@@ -1,0 +1,125 @@
+<% include ../partials/table-header %>
+
+  <body>
+    <% include ../partials/nav %>
+    <div class="container" style="margin:0 auto; width:80%;">
+      <h3>Lab Records <a onclick="location.reload()" class="waves-effect waves-light btn orange" style="float:right">RELOAD <i class="material-icons right">refresh</i></a></h3>
+      <div class="divider" style="margin-bottom:2%;"></div>
+      <br>
+      <div id="div_table">
+        <table id="table" class="display" style="display:none; width:100%;">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Study Program</th>
+              <th>Date</th>
+              <th>Sign In</th>
+              <th>Sign Out</th>
+              <th>Duration</th>
+              <th>PC Number</th>
+              <th>Lab Location</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <br>
+
+      <% include ../partials/preloader-spinner %>
+      <% include ../partials/div-fail-fetch %>
+    </div>
+
+    <!-- div untuk membuat col ttp 9 -->
+  </div>
+  </div>
+  <% include ../partials/script %>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script>
+    <script src="/javascripts/libs/moment.js"></script>
+    <script src="/javascripts/components/collapsible-create.js"></script>
+    <script src="/javascripts/components/modal-edit.js"></script>
+    <script src="/javascripts/components/modal-delete.js"></script>
+    <script>
+      $(document).ready(async () => {
+        $(".dropdown-trigger").dropdown()
+        let table = await initTable('#table')
+      });
+
+      async function initTable(tableID) {
+        const $table = $(tableID)
+        try {
+          let data = await $.get('/lab-transactions/api')
+          let formattedData = data.map(d => [
+            d.student_id, 
+            d.student.name,
+            d.student.study_program.name,
+            moment(d.sign_in).format('Do MMMM YYYY'), 
+            moment(d.sign_in).format('HH : mm : ss'), 
+            moment(d.sign_out).format('HH : mm : ss'), 
+            moment(d.sign_in).isBefore(moment(d.sign_out)) ? 
+              moment.utc(moment(d.sign_out).diff(moment(d.sign_in))).format('HH:mm:ss') : '-',
+            d.pc_number, 
+            d.lab_location
+          ])
+          let table = $table.DataTable({
+            destroy: true,
+            deferRender: true,
+            responsive: true,
+            dom: 'Bfrtip',
+            lengthMenu: [
+              [10, 25, 50, -1],
+              [10, 25, 50, "All"]
+            ],
+            "columns": [
+              { "width": "5%" },
+              { "width": "20%" },
+              { "width": "20%" },
+
+              { "width": "10%" },
+              { "width": "5%" },
+              { "width": "5%" },
+
+              { "width": "20%" },
+              { "width": "5%" },
+              { "width": "10%" }
+            ],
+            buttons: [
+              'pageLength',
+              {
+                extend: 'copyHtml5'
+              },
+              {
+                extend: 'excelHtml5',
+                title: 'LAB RECORDS'
+              },
+              {
+                extend: 'pdf',
+                title: 'LAB RECORDS',
+                text: 'Pdf',
+                orientation: 'landscape'
+              }
+            ],
+            data: formattedData
+          })
+
+          $table.show('slow')
+          table.columns.adjust().draw()
+          table.column('3:visible').order('desc').draw();
+          return table
+        } catch (err) {
+          console.log(err)
+          $('#div_fail_fetch').show()
+          return null
+        } finally {
+          $('#preloader_container').hide('fast')
+        }
+      }
+    </script>
+  </body>
+
+  <% include ../partials/footer %>

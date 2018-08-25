@@ -16,7 +16,9 @@ let auth = require('./middlewares/auth')
 
 // routes import
 let usersRouter = require('./routes/users')
+let dashboardRouter = require('./routes/dashboard')
 let studentsRouter = require('./routes/students')
+let labTransactionsRouter = require('./routes/lab-transactions')
 let apiRouter = require('./routes/api')
 
 const app = express()
@@ -48,15 +50,18 @@ app.use((req, res, next) => {
 
 // dashboard
 app.get('/', auth.isLoggedIn, (req, res) => {
-  console.log(req.isAuthenticated())
-  console.log(req.session.passport)
-  res.render('dashboard/dashboard')
+  // console.log(req.isAuthenticated())
+  // console.log(req.session.passport)
+  res.render('students/view')
+  // res.render('dashboard/dashboard')
 })
 
 // other routes
 app.use('/users', usersRouter)
+app.use('/dashboard', dashboardRouter)
 app.use('/students', studentsRouter)
 app.use('/api', apiRouter)
+app.use('/lab-transactions', labTransactionsRouter)
 
 // not found routes
 app.get('*', auth.isLoggedIn, (req, res) => {

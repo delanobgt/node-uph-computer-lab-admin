@@ -10,7 +10,7 @@ let model = function (sequelize) {
       autoIncrement: true
     },
     student_id: {
-      type: Sequelize.STRING,
+      type: Sequelize.INTEGER,
       allowNull: false
     },
     sign_in: {
@@ -18,7 +18,8 @@ let model = function (sequelize) {
       allowNull: false
     },
     sign_out: {
-      type: Sequelize.DATE
+      type: Sequelize.DATE,
+      allowNull: false
     },
     pc_number: {
       type: Sequelize.INTEGER,
