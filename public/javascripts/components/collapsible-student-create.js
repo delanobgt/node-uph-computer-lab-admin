@@ -1,4 +1,4 @@
-class CollapsibleCreate {
+class CollapsibleStudentCreate {
 
   constructor(collapsibleDOM, table) {
     let self = this

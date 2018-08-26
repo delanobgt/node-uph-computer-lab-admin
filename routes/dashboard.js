@@ -9,7 +9,7 @@ let db = require('../models/index')
 let auth = require('../middlewares/auth')
 
 router.get('/', auth.isLoggedIn, (req, res) => {
-  res.render('dashboard/dashboard');
+  res.render('dashboard/dashboard')
 })
 
 module.exports = router

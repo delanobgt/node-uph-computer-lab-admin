@@ -5,7 +5,7 @@ jQuery.fn.flash = function (color, duration) {
     .animate({ backgroundColor: current }, duration / 2)
 }
 
-class ModalDelete {
+class ModalStudentDelete {
   constructor(modalDOM, row) {
     let self = this
 
@@ -36,7 +36,6 @@ class ModalDelete {
 
     // confirmation text onChange event handler
     this.$modal.find('#confirmation').on('input', function () {
-      console.log('lol')
       if ($(this).val() === name) {
         self.$modal.find('#btn_delete').attr('disabled', false)
       } else {

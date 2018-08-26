@@ -22,6 +22,10 @@ let model = function (sequelize) {
     password: {
       type: Sequelize.STRING,
       allowNull: false
+    },
+    privilege: {
+      type: Sequelize.STRING
+      // allowNull: false
     }
   })
 }

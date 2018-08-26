@@ -1,3 +1,51 @@
-<% include ../partials/header %>
-    <h1>Landing</h1>
+<% include ../partials/table-header %>
+
+  <style>
+
+  </style>
+
+  <body>
+    <% include ../partials/nav %>
+    <div class="container" style="margin:0 auto; width:80%;">
+      <h3>Profile</h3>
+      <div class="divider" style="margin-bottom:2%;"></div>
+
+    </div>
+
+    <div id="modal_edit" class="modal">
+      <div class="modal-content">
+        <div class="row">
+          <h4 class="col s12">Edit Privileges</h4>
+          <div id="div_checkbox" class="input-field col s12"></div>
+        </div>
+      </div>
+      <div class="modal-footer" style="margin-bottom:0.35em;">
+        <button id="btn_reset" class="waves-effect waves-red btn-flat">RESET</button>
+        <button id="btn_update" class="waves-effect waves-light btn orange darken-1">Update</button>
+      </div>
+      <div class="progress" style="display:none; margin:0;">
+        <div class="indeterminate orange"></div>
+      </div>
+    </div>  
+    <!-- div untuk membuat col ttp 9 -->
+  </div>
+  </div>
+  <% include ../partials/script %>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script>
+    <script src="/javascripts/libs/moment.js"></script>
+    <script src="/javascripts/components/modal-user-edit.js"></script>
+    <script src="/javascripts/components/modal-user-delete.js"></script>
+    <script>
+      $(document).ready(async () => {
+        $(".dropdown-trigger").dropdown()
+        $('.sidenav').sidenav()
+      })
+    </script>
+  </body>
+
 <% include ../partials/footer %>

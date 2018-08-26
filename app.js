@@ -50,10 +50,7 @@ app.use((req, res, next) => {
 
 // dashboard
 app.get('/', auth.isLoggedIn, (req, res) => {
-  // console.log(req.isAuthenticated())
-  // console.log(req.session.passport)
-  res.render('students/view')
-  // res.render('dashboard/dashboard')
+  res.redirect('/dashboard')
 })
 
 // other routes
@@ -65,7 +62,7 @@ app.use('/lab-transactions', labTransactionsRouter)
 
 // not found routes
 app.get('*', auth.isLoggedIn, (req, res) => {
-  res.send('404 not found')
+  res.redirect('/dashboard')
 })
 
 const PORT = process.env.PORT || 8080

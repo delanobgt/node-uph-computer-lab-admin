@@ -5,7 +5,7 @@ jQuery.fn.flash = function (color, duration) {
     .animate({ backgroundColor: current }, duration / 2)
 }
 
-class ModalEdit {
+class ModalStudentEdit {
   constructor(modalDOM, row) {
     let self = this
 
@@ -97,6 +97,8 @@ class ModalEdit {
         this.$modal.find('#student_id').trigger('input')
         this.$modal.find('#name').trigger('input')
         this.$modal.find(`span:contains('${oldStudyProgram}')`).click()
+
+        this.modalInstance.close()
       } catch (err) {
         // animation
         console.log('error', err)

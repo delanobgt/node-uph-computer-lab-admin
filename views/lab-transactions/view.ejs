@@ -3,8 +3,23 @@
   <body>
     <% include ../partials/nav %>
     <div class="container" style="margin:0 auto; width:80%;">
-      <h3>Lab Records <a onclick="location.reload()" class="waves-effect waves-light btn orange" style="float:right">RELOAD <i class="material-icons right">refresh</i></a></h3>
+      <h3>Lab Records</h3>
       <div class="divider" style="margin-bottom:2%;"></div>
+
+      <div class="row">
+        <div class="input-field col m3 l4">
+          <input id="txt_start" type="text" class="datepicker">
+          <label for="txt_start">Start</label>
+        </div>
+        <div class="input-field col m3 l4">
+          <input id="txt_end" type="text" class="datepicker">
+          <label for="txt_end">End</label>
+        </div>
+        <div class="input-field col m3 l4">
+          <button id="btn_generate" type="button" class="waves-effect waves-light btn">GENERATE</button>
+        </div>
+      </div>
+
       <br>
       <div id="div_table">
         <table id="table" class="display" style="display:none; width:100%;">
@@ -26,7 +41,22 @@
       </div>
       <br>
 
-      <% include ../partials/preloader-spinner %>
+      <div id="preloader_container" style="text-align:center; padding:2em; display:none;">
+        <div class="preloader-wrapper big active">
+          <div class="spinner-layer spinner-blue-only">
+            <div class="circle-clipper left">
+              <div class="circle"></div>
+            </div>
+            <div class="gap-patch">
+              <div class="circle"></div>
+            </div>
+            <div class="circle-clipper right">
+              <div class="circle"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <% include ../partials/div-fail-fetch %>
     </div>
 
@@ -47,13 +77,36 @@
     <script>
       $(document).ready(async () => {
         $(".dropdown-trigger").dropdown()
-        let table = await initTable('#table')
+        $('.sidenav').sidenav()
+        initForm()
       });
 
-      async function initTable(tableID) {
+      function initForm() {
+        let textDOM = document.querySelectorAll('.datepicker')
+        $(textDOM).val('')
+        let instances = M.Datepicker.init(textDOM, {
+          format: 'yyyy-mm-dd',
+          autoClose: true
+        })
+        
+        $('#btn_generate').click(async () => {
+          let startDate = instances[0].toString()
+          let endDate = instances[1].toString()
+          if (startDate == '' || endDate == '') {
+            M.toast({html: 'Fields cannot be empty!', classes: 'red', displayLength: 2000})
+            return
+          }
+          await loadTable('#table', startDate, endDate)
+        })
+      }
+
+      async function loadTable(tableID, startDate, endDate) {
         const $table = $(tableID)
+        $table.hide('fast')
+        $('#div_fail_fetch').hide()
+        $('#preloader_container').show('fast')
         try {
-          let data = await $.get('/lab-transactions/api')
+          let data = await $.get('/lab-transactions/api', { startDate, endDate })
           let formattedData = data.map(d => [
             d.student_id, 
             d.student.name,
@@ -71,23 +124,7 @@
             deferRender: true,
             responsive: true,
             dom: 'Bfrtip',
-            lengthMenu: [
-              [10, 25, 50, -1],
-              [10, 25, 50, "All"]
-            ],
-            "columns": [
-              { "width": "5%" },
-              { "width": "20%" },
-              { "width": "20%" },
-
-              { "width": "10%" },
-              { "width": "5%" },
-              { "width": "5%" },
-
-              { "width": "20%" },
-              { "width": "5%" },
-              { "width": "10%" }
-            ],
+            lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
             buttons: [
               'pageLength',
               {

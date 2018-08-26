@@ -44,18 +44,6 @@ router.post('/api', async (req, res) => {
   }
 })
 
-router.delete('/api/:studentID', async (req, res) => {
-  try {
-    await db.Student.destroy({
-      where: { student_id: req.params.studentID }
-    })
-    res.json({success: true})
-  } catch (err) {
-    console.log(err)
-    res.status(404).json({ msg: 'Error/Duplicate data' })
-  }
-})
-
 router.put('/api/:studentID', async (req, res) => {
   try {
     let newStudyProgram = await db.StudyProgram.findOne({
@@ -72,6 +60,18 @@ router.put('/api/:studentID', async (req, res) => {
   } catch (err) {
     console.log(err)
     res.status(404).json({ msg: 'Error/Duplicate data' })
+  }
+})
+
+router.delete('/api/:studentID', async (req, res) => {
+  try {
+    await db.Student.destroy({
+      where: { student_id: req.params.studentID }
+    })
+    res.json({success: true})
+  } catch (err) {
+    console.log(err)
+    res.status(404).json({ msg: 'Failed to delete' })
   }
 })
 

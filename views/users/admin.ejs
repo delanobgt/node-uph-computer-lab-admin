@@ -1,0 +1,198 @@
+<% include ../partials/table-header %>
+
+  <style>
+    .my-close {
+      user-select: none;
+      cursor: pointer;
+      background: lightgray;
+      border-radius: 100%;
+      padding: 0.2em;
+      font-size: 1em;
+    }
+
+    .my-edit {
+      user-select: none;
+      cursor: pointer;
+      padding: 0.2em;
+      font-size: 1.25em;
+    }
+
+    span.confirmation {
+      color: rgb(70, 70, 70);
+      background: rgb(220, 220, 220);
+      border: 2px solid rgb(180, 180, 180);
+      border-radius: 3px;
+      padding: 0.1em 0.3em;
+    }
+
+    p.confirmation {
+      line-height: 220%;
+    }
+  </style>
+
+  <body>
+    <% include ../partials/nav %>
+    <div class="container" style="margin:0 auto; width:80%;">
+      <h3>Admin Panel</h3>
+      <div class="divider" style="margin-bottom:2%;"></div>
+
+      <br>
+      <div id="div_table">
+        <table id="table" class="display" style="display:none; width:100%;">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Privilege</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <br>
+
+      <div id="preloader_container" style="text-align:center; padding:2em; display:none;">
+        <div class="preloader-wrapper big active">
+          <div class="spinner-layer spinner-blue-only">
+            <div class="circle-clipper left">
+              <div class="circle"></div>
+            </div>
+            <div class="gap-patch">
+              <div class="circle"></div>
+            </div>
+            <div class="circle-clipper right">
+              <div class="circle"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <% include ../partials/div-fail-fetch %>
+    </div>
+
+    <div id="modal_edit" class="modal">
+      <div class="modal-content">
+        <div class="row">
+          <h4 class="col s12">Edit Privileges</h4>
+          <div id="div_checkbox" class="input-field col s12"></div>
+        </div>
+      </div>
+      <div class="modal-footer" style="margin-bottom:0.35em;">
+        <button id="btn_reset" class="waves-effect waves-red btn-flat">RESET</button>
+        <button id="btn_update" class="waves-effect waves-light btn orange darken-1">Update</button>
+      </div>
+      <div class="progress" style="display:none; margin:0;">
+        <div class="indeterminate orange"></div>
+      </div>
+    </div>
+
+    <div id="modal_delete" class="modal">
+      <div class="modal-content" style="margin:0; padding-bottom:0;">
+        <div class="row" style="margin-top:0; margin-bottom:0;">
+          <h4 class="col s12">Delete Student</h4>
+          <div class="input-field col s12" style="margin-top:0; margin-bottom:0;">
+            <p class="confirmation" style="margin-top:0; margin-bottom:0;">
+              Are you sure? <br>
+              Please type <span class="confirmation"></span> to confirm deletion.
+            </p>
+          </div>
+          <div class="input-field col s12">
+            <input id="confirmation" name="confirmation" type="text" class="validate" required>
+            <label for="confirmation">Retype here</label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="margin-bottom:0.35em;">
+        <button id="btn_cancel" class="waves-effect waves-red btn-flat">CANCEL</button>
+        <button id="btn_delete" class="waves-effect waves-light btn red darken-1">DELETE</button>
+      </div>
+      <div class="progress" style="display:none; margin:0;">
+        <div class="indeterminate orange"></div>
+      </div>
+    </div>
+
+    <!-- div untuk membuat col ttp 9 -->
+  </div>
+  </div>
+  <% include ../partials/script %>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script>
+    <script src="/javascripts/libs/moment.js"></script>
+    <script src="/javascripts/components/modal-user-edit.js"></script>
+    <script src="/javascripts/components/modal-user-delete.js"></script>
+    <script>
+      $(document).ready(async () => {
+        $(".dropdown-trigger").dropdown()
+        $('.sidenav').sidenav()
+        loadTable('#table')
+      });
+      
+      async function loadTable(tableID) {
+        const $table = $(tableID)
+        $table.hide('fast')
+        $('#div_fail_fetch').hide()
+        $('#preloader_container').show('fast')
+        try {
+          let data = await $.get('/users/api')
+          let formattedData = data.map(d => [
+            d.username, 
+            d.email,
+            d.privilege.replace(/;/g, '<br>'),
+            '<i class="my-edit material-icons">border_color</i>',
+            '<i class="my-close material-icons">close</i>'
+          ])
+          let table = $table.DataTable({
+            destroy: true,
+            deferRender: true,
+            responsive: true,
+            dom: 'Bfrtip',
+            lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+            buttons: [
+              'pageLength',
+              {
+                extend: 'copyHtml5'
+              },
+              {
+                extend: 'excelHtml5',
+                title: 'LAB RECORDS'
+              },
+              {
+                extend: 'pdf',
+                title: 'LAB RECORDS',
+                text: 'Pdf',
+                orientation: 'landscape'
+              }
+            ],
+            data: formattedData
+          })
+
+          $('#table').on('click', 'i.my-edit', function () {
+            let row = table.row($(this).parent().parent())
+            new ModalUserEdit($('#modal_edit')[0], row).show()
+          })
+
+          $('#table').on('click', 'i.my-close', function () {
+            let row = table.row($(this).parent().parent())
+            new ModalUserDelete($('#modal_delete')[0], row).show()
+          })
+
+          $table.show('slow')
+          return table
+        } catch (err) {
+          console.log(err)
+          $('#div_fail_fetch').show()
+          return null
+        } finally {
+          $('#preloader_container').hide('fast')
+        }
+      }
+    </script>
+  </body>
+
+  <% include ../partials/footer %>
