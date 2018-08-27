@@ -10,6 +10,7 @@ let sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, proc
 })
 
 const User = require('./user')(sequelize)
+const UserToken = require('./user-tokens')(sequelize)
 const Student = require('./student')(sequelize)
 const LabTransaction = require('./lab-transaction')(sequelize)
 const StudyProgram = require('./study-program')(sequelize)
@@ -23,6 +24,7 @@ sequelize.sync({
 
 module.exports = {
   User,
+  UserToken,
   Student,
   LabTransaction,
   StudyProgram

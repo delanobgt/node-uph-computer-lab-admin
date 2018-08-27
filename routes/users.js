@@ -43,8 +43,14 @@ router.post('/new', async(req, res) => {
   let confirmPassword = req.body.confirmPassword
   
   try {
+    let foundToken = await db.UserToken.findOne({
+      where: {token: req.body.token}
+    })
+    if (!foundToken) return res.redirect('/')
+
     let hashedPassword = await bcrypt.hash(password, parseInt(process.env.USER_SALT_ROUNDS))
     let createdUser = await db.User.create({ username, email, password: hashedPassword })
+    await foundToken.destroy()
     req.login(createdUser.dataValues, (err) => {
       res.redirect('/')
     })
@@ -67,7 +73,18 @@ router.get('/profile', async (req, res) => {
 })
 
 router.get('/admin', async (req, res) => {
-  res.render('users/admin')
+  let tokens, mappedTokens
+  try {
+    tokens = await db.UserToken.findAll()
+    mappedTokens = 
+      tokens
+        .map(token => token.dataValues)
+        .map(token => token.token)
+  } catch (err) {
+    console.log(err)
+  } finally {
+    res.render('users/admin', {tokens: mappedTokens || []})
+  }
 })
 
 router.get('/api', async (req, res) => {

@@ -18,4 +18,28 @@ router.get('/study-programs', async (req, res) => {
   }
 })
 
+router.post('/tokens', async (req, res) => {
+  try {
+    let token = await db.UserToken.create({
+      token: req.body.token
+    })
+    console.log(token)
+    res.json(token)
+  } catch (err) {
+    console.log(err)
+    res.status(404).json({ msg: 'Error/Duplicate token' })
+  }
+})
+router.delete('/tokens/:token', async (req, res) => {
+  try {
+    await db.UserToken.destroy({
+      where: { token: req.params.token }
+    })
+    res.json({success: true})
+  } catch (err) {
+    console.log(err)
+    res.status(404).json({ msg: 'Failed to delete' })
+  }
+})
+
 module.exports = router
