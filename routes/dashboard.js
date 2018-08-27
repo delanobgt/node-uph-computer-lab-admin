@@ -8,7 +8,7 @@ let db = require('../models/index')
 // middlewares import
 let auth = require('../middlewares/auth')
 
-router.get('/', auth.isLoggedIn, (req, res) => {
+router.get('/', auth.havePermission('DASHBOARD_VIEW'), (req, res) => {
   res.render('dashboard/dashboard')
 })
 

@@ -8,11 +8,11 @@ let db = require('../models/index')
 // middlewares import
 let auth = require('../middlewares/auth')
 
-router.get('/', auth.isLoggedIn, (req, res) => {
+router.get('/', auth.havePermission('STUDENTS_VIEW'), (req, res) => {
   res.render('students/view');
 })
 
-router.get('/api', async (req, res) => {
+router.get('/api', auth.havePermission('STUDENTS_VIEW'), async (req, res) => {
   try {
     let students = await db.Student.findAll({
       include: [{
@@ -27,7 +27,7 @@ router.get('/api', async (req, res) => {
   }
 })
 
-router.post('/api', async (req, res) => {
+router.post('/api', auth.havePermission('STUDENTS_MODIFY'), async (req, res) => {
   try {
     let studyProgram = await db.StudyProgram.findOne({
       where: { name: req.body.studyProgram }
@@ -44,7 +44,7 @@ router.post('/api', async (req, res) => {
   }
 })
 
-router.put('/api/:studentID', async (req, res) => {
+router.put('/api/:studentID', auth.havePermission('STUDENTS_MODIFY'), async (req, res) => {
   try {
     let newStudyProgram = await db.StudyProgram.findOne({
         where: { name: req.body.newStudyProgram }
@@ -63,7 +63,7 @@ router.put('/api/:studentID', async (req, res) => {
   }
 })
 
-router.delete('/api/:studentID', async (req, res) => {
+router.delete('/api/:studentID', auth.havePermission('STUDENTS_MODIFY'), async (req, res) => {
   try {
     await db.Student.destroy({
       where: { student_id: req.params.studentID }

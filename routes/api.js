@@ -8,7 +8,7 @@ let db = require('../models/index')
 // middlewares import
 let auth = require('../middlewares/auth')
 
-router.get('/study-programs', async (req, res) => {
+router.get('/study-programs', auth.havePermission('STUDENTS_VIEW', 'STUDENTS_MODIFY'), async (req, res) => {
   try {
     let studyPrograms = await db.StudyProgram.findAll()
     res.json(studyPrograms)
@@ -18,7 +18,7 @@ router.get('/study-programs', async (req, res) => {
   }
 })
 
-router.post('/tokens', async (req, res) => {
+router.post('/tokens', auth.havePermission('ADMIN'), async (req, res) => {
   try {
     let token = await db.UserToken.create({
       token: req.body.token
@@ -30,7 +30,7 @@ router.post('/tokens', async (req, res) => {
     res.status(404).json({ msg: 'Error/Duplicate token' })
   }
 })
-router.delete('/tokens/:token', async (req, res) => {
+router.delete('/tokens/:token', auth.havePermission('ADMIN'), async (req, res) => {
   try {
     await db.UserToken.destroy({
       where: { token: req.params.token }

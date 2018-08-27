@@ -6,6 +6,9 @@ let LocalStrategy = require('passport-local').Strategy
 
 let db = require('../models/index')
 
+// middlewares import
+let auth = require('../middlewares/auth')
+
 passport.serializeUser((user, done) => {
   done(null, user)
 })
@@ -20,7 +23,7 @@ passport.use(new LocalStrategy({
     try {
       let foundUser = await db.User.findOne({ where: {email} })
       if (!foundUser) done(null, false)
-      else if (bcrypt.compareSync(password, foundUser.password)) done(null, foundUser)
+      else if (bcrypt.compareSync(password, foundUser.password)) done(null, foundUser.dataValues)
       else done(null, false)
     } catch (err) {
       done(null, false)
@@ -34,7 +37,7 @@ router.get('/auth', (req, res) => {
 })
 router.post('/login', passport.authenticate('local', {
   successRedirect: '/',
-  failureRedirect: '/users/login'
+  failureRedirect: '/users/auth'
 }))
 router.post('/new', async(req, res) => {
   let username = req.body.username
@@ -46,7 +49,7 @@ router.post('/new', async(req, res) => {
     let foundToken = await db.UserToken.findOne({
       where: {token: req.body.token}
     })
-    if (!foundToken) return res.redirect('/')
+    if (!foundToken) return res.redirect('/?register=1')
 
     let hashedPassword = await bcrypt.hash(password, parseInt(process.env.USER_SALT_ROUNDS))
     let createdUser = await db.User.create({ username, email, password: hashedPassword })
@@ -63,16 +66,14 @@ router.get('/logout', async (req, res) => {
   req.logout()
   req.session.destroy()
   res.redirect('/users/auth')
-  // console.log(req.isAuthenticated())
-  // console.log(req.session.passport)
 })
 
-router.get('/profile', async (req, res) => {
+router.get('/profile', auth.isLoggedIn, async (req, res) => {
   console.log(req.session.passport.user)
   res.render('users/profile', {user: req.session.passport.user})
 })
 
-router.get('/admin', async (req, res) => {
+router.get('/admin', auth.havePermission('ADMIN'), async (req, res) => {
   let tokens, mappedTokens
   try {
     tokens = await db.UserToken.findAll()
@@ -87,15 +88,15 @@ router.get('/admin', async (req, res) => {
   }
 })
 
-router.get('/api', async (req, res) => {
-  try {
-    let users = await db.User.findAll()
-    let mappedUsers = 
-      users
-        .map(user => user.dataValues)
-        .map(user => {
-          return { username: user.username, email: user.email, privilege: user.privilege }
-        })
+router.get('/api', auth.havePermission('ADMIN'), async (req, res) => {
+try {
+let users = await db.User.findAll()
+let mappedUsers = 
+  users
+    .map(user => user.dataValues)
+    .map(user => {
+      return { username: user.username, email: user.email, privilege: user.privilege }
+    })
     res.json(mappedUsers)
   } catch (err) {
     console.log(err)
@@ -103,7 +104,7 @@ router.get('/api', async (req, res) => {
   }
 })
 
-router.delete('/api/:username', async (req, res) => {
+router.delete('/api/:username', auth.havePermission('ADMIN'), async (req, res) => {
   try {
     await db.User.destroy({
       where: { username: req.params.username }
@@ -115,7 +116,7 @@ router.delete('/api/:username', async (req, res) => {
   }
 })
 
-router.put('/api/:username/privilege', async (req, res) => {
+router.put('/api/:username/privilege', auth.havePermission('ADMIN'), async (req, res) => {
   try {
     let user = await db.User.findOne({
         where: { username: req.params.username }
@@ -133,7 +134,7 @@ router.put('/api/:username/privilege', async (req, res) => {
   }
 })
 
-router.put('/api/:username/password', async (req, res) => {
+router.put('/api/:username/password', auth.isLoggedIn, async (req, res) => {
   try {
     let user = await db.User.findOne({
         where: { username: req.params.username }

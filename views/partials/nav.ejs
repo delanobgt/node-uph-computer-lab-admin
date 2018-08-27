@@ -8,10 +8,18 @@
           <div class="divider"></div>
         </li>
         <ul class="collapsible sidenav-fixed" style="padding: 5%">
-          <li><a class="collapsible-header" href="/dashboard">Dashboard</a></li>
-          <li><a class="collapsible-header" href="/students">Students</a></li>
-          <li><a class="collapsible-header" href="/lab-transactions">Lab Records</a></li>
-          <li><a class="collapsible-header" href="/users/admin">Admin Panel</a></li>
+          <% if (user.privilege.includes('DASHBOARD_VIEW')) { %>
+            <li><a class="collapsible-header" href="/dashboard">Dashboard</a></li> 
+          <% } %>
+          <% if (user.privilege.includes('STUDENTS_VIEW')) { %>
+            <li><a class="collapsible-header" href="/students">Students</a></li> 
+          <% } %>
+          <% if (user.privilege.includes('LABRECORDS_VIEW')) { %>
+            <li><a class="collapsible-header" href="/lab-transactions">Lab Records</a></li> 
+          <% } %>
+          <% if (user.privilege.includes('ADMIN')) { %>
+            <li><a class="collapsible-header" href="/users/admin">Admin Panel</a></li> 
+          <% } %>
         </ul>
       </ul>
       <a href="#" data-target="slide-out" class="sidenav-trigger">
@@ -32,7 +40,7 @@
       <nav>
         <div class="nav-wrapper orange darken-1">
           <ul>
-            <li><a class="dropdown-trigger" href="#!" data-target="user_dropdown">delanobgt<i class="material-icons right">arrow_drop_down</i></a></li>
+            <li><a class="dropdown-trigger" href="#!" data-target="user_dropdown"><%= user.username %><i class="material-icons right">arrow_drop_down</i></a></li>
           </ul>
         </div>
       </nav>

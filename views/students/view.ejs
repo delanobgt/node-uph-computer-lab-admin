@@ -40,44 +40,45 @@
         <h3>Students</h3>
         <div class="divider" style="margin-bottom:2%;"></div>
 
-        <ul id="collapsible_create" class="collapsible">
-          <li>
-            <div class="collapsible-header">
-              <i class="material-icons">add</i>Add Student</div>
-            <div class="collapsible-body">
-              <div class="row">
-                <form class="col s12">
-                  <div class="row">
-                    <div class="input-field col s12">
-                      <input id="student_id" type="text" class="validate">
-                      <label for="name">Student ID</label>
+        <% if (user.privilege.includes('STUDENTS_MODIFY')) { %>
+          <ul id="collapsible_create" class="collapsible">
+            <li>
+              <div class="collapsible-header">
+                <i class="material-icons">add</i>Add Student</div>
+              <div class="collapsible-body">
+                <div class="row">
+                  <form class="col s12">
+                    <div class="row">
+                      <div class="input-field col s12">
+                        <input id="student_id" type="text" class="validate">
+                        <label for="name">Student ID</label>
+                      </div>
+                      <div class="input-field col s12">
+                        <input id="name" type="text" class="validate">
+                        <label for="name">Name</label>
+                      </div>
+                      <div id="div_select" class="input-field col s12">
+                        <select id="study_program" name="study_program" style="margin-top:0.5em;">
+                          <option value="" disabled selected>Loading Study Programs..</option>
+                        </select>
+                        <label for="study_program">Study Program</label>
+                      </div>
                     </div>
-                    <div class="input-field col s12">
-                      <input id="name" type="text" class="validate">
-                      <label for="name">Name</label>
+                    <div class="right-align">
+                      <button id="btn_cancel" type="button" class="waves-effect waves-light btn-flat">CANCEL</button>
+                      <button id="btn_create" type="button" class="waves-effect waves-light btn orange">
+                        <i class="material-icons right">send</i>CREATE
+                      </button>
                     </div>
-                    <div id="div_select" class="input-field col s12">
-                      <select id="study_program" name="study_program" style="margin-top:0.5em;">
-                        <option value="" disabled selected>Loading Study Programs..</option>
-                      </select>
-                      <label for="study_program">Study Program</label>
-                    </div>
-                  </div>
-                  <div class="right-align">
-                    <button id="btn_cancel" type="button" class="waves-effect waves-light btn-flat">CANCEL</button>
-                    <button id="btn_create" type="button" class="waves-effect waves-light btn orange">
-                      <i class="material-icons right">send</i>CREATE
-                    </button>
-                  </div>
-                </form>
+                  </form>
+                </div>
               </div>
-            </div>
-            <div class="progress" style="display:none; margin:0;">
-              <div class="indeterminate orange"></div>
-            </div>
-          </li>
-        </ul>
-
+              <div class="progress" style="display:none; margin:0;">
+                <div class="indeterminate orange"></div>
+              </div>
+            </li>
+          </ul>
+        <% } %>
         <br>
         <div id="div_table">
           <table id="table" class="display" style="display:none; width:100%;">
@@ -86,8 +87,10 @@
                 <th>NIM</th>
                 <th>Name</th>
                 <th>Study Program</th>
-                <th></th>
-                <th></th>
+                <% if (user.privilege.includes('STUDENTS_MODIFY')) { %>
+                  <th></th>
+                  <th></th>
+                <% } %>
               </tr>
             </thead>
             <tbody></tbody>
@@ -183,8 +186,10 @@
           let data = await $.get('/students/api')
           console.log(data)
           let formattedData = data.map(data => [data.student_id, data.name, data.study_program.name,
-            '<i class="my-edit material-icons">border_color</i>',
-            '<i class="my-close material-icons">close</i>'
+            <% if (user.privilege.includes('STUDENTS_MODIFY')) { %>  
+              '<i class="my-edit material-icons">border_color</i>',
+              '<i class="my-close material-icons">close</i>'
+            <% } %>
           ])
           let table = $table.DataTable({
             destroy: true,

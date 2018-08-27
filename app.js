@@ -45,12 +45,15 @@ app.use(passport.session())
 // middlewares
 app.use((req, res, next) => {
   res.locals.info = 'some info'
+  if (req.session.passport)
+    res.locals.user = req.session.passport.user
   next()
 })
 
 // dashboard
 app.get('/', auth.isLoggedIn, (req, res) => {
-  res.redirect('/dashboard')
+  // res.redirect('/dashboard')
+  res.redirect('/students')
 })
 
 // other routes
@@ -62,7 +65,7 @@ app.use('/lab-transactions', labTransactionsRouter)
 
 // not found routes
 app.get('*', auth.isLoggedIn, (req, res) => {
-  res.redirect('/dashboard')
+  res.redirect('/')
 })
 
 const PORT = process.env.PORT || 8080
