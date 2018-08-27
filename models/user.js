@@ -24,8 +24,8 @@ let model = function (sequelize) {
       allowNull: false
     },
     privilege: {
-      type: Sequelize.STRING
-      // allowNull: false
+      type: Sequelize.STRING,
+      allowNull: false
     }
   })
 }

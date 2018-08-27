@@ -16,15 +16,17 @@ passport.deserializeUser((user, done) => {
   done(null, user)
 })
 passport.use(new LocalStrategy({
-    usernameField: 'email',
-    passwordField: 'password'
+    usernameField: 'login_email',
+    passwordField: 'login_password'
   },
   async (email, password, done) => {
+    console.log('start')
     try {
       let foundUser = await db.User.findOne({ where: {email} })
       if (!foundUser) done(null, false)
       else if (bcrypt.compareSync(password, foundUser.password)) done(null, foundUser.dataValues)
       else done(null, false)
+      console.log('udah')
     } catch (err) {
       done(null, false)
       console.log(err)
@@ -49,10 +51,14 @@ router.post('/new', async(req, res) => {
     let foundToken = await db.UserToken.findOne({
       where: {token: req.body.token}
     })
-    if (!foundToken) return res.redirect('/?register=1')
+    if (!foundToken) {
+      req.flash('tokenError', 'Token Invalid')
+      return res.redirect('/users/auth')
+    }
 
     let hashedPassword = await bcrypt.hash(password, parseInt(process.env.USER_SALT_ROUNDS))
-    let createdUser = await db.User.create({ username, email, password: hashedPassword })
+    let createdUser = await db.User.create(
+      { username, email, password: hashedPassword, privilege: 'ADMIN;STUDENTS_VIEW;STUDENTS_MODIFY;LABRECORDS_VIEW;DASHBOARD_VIEW' })
     await foundToken.destroy()
     req.login(createdUser.dataValues, (err) => {
       res.redirect('/')

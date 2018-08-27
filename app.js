@@ -44,9 +44,10 @@ app.use(passport.session())
 
 // middlewares
 app.use((req, res, next) => {
-  res.locals.info = 'some info'
-  if (req.session.passport)
-    res.locals.user = req.session.passport.user
+  res.locals.info = req.flash('info')
+  res.locals.error = req.flash('error')
+  res.locals.tokenError = req.flash('tokenError')
+  if (req.session.passport) res.locals.user = req.session.passport.user
   next()
 })
 
