@@ -25,7 +25,7 @@
         <table id="table" class="display" style="display:none; width:100%;">
           <thead>
             <tr>
-              <th>ID</th>
+              <th>Student ID</th>
               <th>Name</th>
               <th>Study Program</th>
               <th>Date</th>
@@ -108,8 +108,9 @@
         $('#preloader_container').show('fast')
         try {
           let data = await $.get('/lab-transactions/api', { startDate, endDate })
+          console.log(data)
           let formattedData = data.map(d => [
-            d.student_id, 
+            d.student.student_id, 
             d.student.name,
             d.student.study_program.name,
             moment(d.sign_in).format('Do MMMM YYYY'), 
