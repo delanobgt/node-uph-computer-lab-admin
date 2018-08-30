@@ -2,10 +2,12 @@
 
 // dependencies import
 let express = require('express')
-let router = express.Router()
-let db = require('../models/index')
+let moment = require('moment')
 let Sequelize = require('sequelize')
 let Op = Sequelize.Op;
+let router = express.Router()
+let db = require('../models/index')
+
 
 // middlewares import
 let auth = require('../middlewares/auth')
@@ -18,7 +20,8 @@ router.get('/api', auth.havePermission('LABRECORDS_VIEW'), async (req, res) => {
   try {
     if (!req.query.startDate || !req.query.endDate) throw new Error()
     let startDate = new Date(req.query.startDate)
-    let endDate = new Date(req.query.endDate)
+    let endDate = moment(req.query.endDate).add(1, 'days').toDate()
+    console.log(startDate, endDate)
     let labTransactions = await db.LabTransaction.findAll({
       include: [{
         model: db.Student,

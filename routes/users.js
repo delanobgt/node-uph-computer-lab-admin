@@ -20,13 +20,11 @@ passport.use(new LocalStrategy({
     passwordField: 'login_password'
   },
   async (email, password, done) => {
-    console.log('start')
     try {
       let foundUser = await db.User.findOne({ where: {email} })
       if (!foundUser) done(null, false)
       else if (bcrypt.compareSync(password, foundUser.password)) done(null, foundUser.dataValues)
       else done(null, false)
-      console.log('udah')
     } catch (err) {
       done(null, false)
       console.log(err)

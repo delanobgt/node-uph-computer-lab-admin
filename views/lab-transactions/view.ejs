@@ -92,6 +92,7 @@
         $('#btn_generate').click(async () => {
           let startDate = instances[0].toString()
           let endDate = instances[1].toString()
+          console.log(startDate, endDate)
           if (startDate == '' || endDate == '') {
             M.toast({html: 'Fields cannot be empty!', classes: 'red', displayLength: 2000})
             return
@@ -146,6 +147,7 @@
 
           $table.show('slow')
           table.columns.adjust().draw()
+          table.column('4:visible').order('desc').draw();
           table.column('3:visible').order('desc').draw();
           return table
         } catch (err) {
